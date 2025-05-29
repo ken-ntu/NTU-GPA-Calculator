@@ -8,12 +8,14 @@ args = arg_conf.ArgParser().parse_args()
 file_path = args.path
 if args.ignore_warnings:
     import logging
+
     get_logger("pdfminer").setLevel(logging.ERROR)
 
 LOGGER = get_logger()
 
 if args.debug:
     import logging
+
     LOGGER.setLevel(logging.DEBUG)
 
 grades = []
@@ -21,7 +23,7 @@ with pdfplumber.open(file_path) as pdf_file:
     for i, page in enumerate(pdf_file.pages):
         text = page.extract_text()
         if "NATIONAL TAIWAN UNIVERSITY\nTRANSCRIPTOF ACADEMIC RECORD" in text:
-            pattern = r'([A-Za-z0-9\-\:\,\.\(\)\~\!\u2160-\u216F\u2606]+)\s(\d) ([A-CFX][+-]?|PASS|W|EX|TR|NG|IP)\s'
+            pattern = r"([A-Za-z0-9\-\:\,\.\(\)\~\!\u2160-\u216F\u2606]+)\s(\d) ([A-CFX][+-]?|PASS|W|EX|TR|NG|IP)\s"
             grades.extend(re.findall(pattern, text))
 
 grade_to_points = {
@@ -43,14 +45,14 @@ grade_credits = 0
 pass_credits = 0
 total_grades = 0
 for _, credits, letter_grade in grades:
-    if re.match(r'W|EX|TR|NG|IP', letter_grade):
+    if re.match(r"W|EX|TR|NG|IP", letter_grade):
         continue
-    if re.match(r'PASS', letter_grade):
+    if re.match(r"PASS", letter_grade):
         pass_credits += int(credits)
         continue
     if letter_grade not in grade_to_points:
         raise ValueError("Extracted Grade not found!")
-    
+
     grade_credits += int(credits)
     total_grades += grade_to_points[letter_grade] * int(credits)
 
