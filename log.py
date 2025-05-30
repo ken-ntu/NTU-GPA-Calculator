@@ -1,10 +1,11 @@
 import logging
+import sys
 
 
 class CustomLogger(logging.Logger):
     def __init__(self, name: str = "main", level: int = logging.INFO):
         super().__init__(name, level)
-        handler = logging.StreamHandler()
+        handler = logging.StreamHandler(sys.stdout)
         handler.setFormatter(logging.Formatter("[%(levelname)s]: %(message)s"))
         self.addHandler(handler)
 
